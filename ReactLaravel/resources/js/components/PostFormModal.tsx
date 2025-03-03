@@ -1,18 +1,21 @@
+
+
+
+
 import { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
-import { Toaster, toast } from "sonner";
-
+ 
 interface Post {
   id?: number;
   title: string;
   content: string;
-picture ?: string;
+  picture?: string;
 }
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
-post ?: Post | null;
+  post?: Post | null;
 }
 
 export default function PostFormModal({ isOpen, closeModal, post }: Props) {
@@ -53,34 +56,29 @@ export default function PostFormModal({ isOpen, closeModal, post }: Props) {
     if (selectedFile) {
       data.append("picture", selectedFile);
     }
-    const successMessage = post?.id ? "Post updated successfully!" : "Post created successfully!";
-    const errorMessage = post?.id ? "Failed to update post." : "Failed to create post.";
+    
     if (post?.id) {
       data.append("_method", "PUT");
       router.post(`/posts/${post.id}`, data, {
         onSuccess: () => {
-          toast.success(successMessage);
-
+ 
           closeModal();
           router.reload();
         },
         onError: (errors) => {
-          toast.error(errors.message || errorMessage);
-
+ 
           console.error(errors.message || "Failed to submit post.");
         },
       });
     } else {
       router.post("/posts", data, {
         onSuccess: () => {
-          toast.success(successMessage);
-
+ 
           closeModal();
           router.reload();
         },
         onError: (errors) => {
-          toast.error(errors.message || errorMessage);
-
+ 
           console.error(errors.message || "Failed to submit post.");
         },
       });
@@ -92,31 +90,51 @@ export default function PostFormModal({ isOpen, closeModal, post }: Props) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
-        <h2 className="text-lg font-semibold mb-4">{post ? "Edit Post" : "Add Post"}</h2>        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <h2 className="text-lg font-semibold mb-4">{post ? "Edit Post" : "Add Post"}</h2>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="mb-3">
-            <label className="block text-sm font-medium">Title</label>            <input type="text"
+            <label className="block text-sm font-medium">Title</label>
+            <input
+              type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
               className="w-full border rounded p-2"
-              required />
-          </div>          <div className="mb-3">
-            <label className="block text-sm font-medium">Content</label>            <textarea name="content"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="block text-sm font-medium">Content</label>
+            <textarea
+              name="content"
               value={formData.content}
               onChange={handleChange}
               className="w-full border rounded p-2"
-              required            ></textarea>          </div>          <div className="mb-3">
-            <label className="block text-sm font-medium">Picture (optional)</label>            <input type="file"
+              required
+            ></textarea>
+          </div>
+          <div className="mb-3">
+            <label className="block text-sm font-medium">Picture (optional)</label>
+            <input
+              type="file"
               name="picture"
               onChange={handleFileChange}
               className="w-full"
               accept="image/*"
             />
-          </div>          {preview && (
+          </div>
+          {preview && (
             <div className="mb-3">
-              <p className="text-sm mb-1">Image Preview:</p>              <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded" />
-            </div>)}
+              <p className="text-sm mb-1">Image Preview:</p>
+              <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded" />
+            </div>
+          )}
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{post ? "Update" : "Create"}</button>          </div>        </form>      </div>    </div>);
+            <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{post ? "Update" : "Create"}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
- 
